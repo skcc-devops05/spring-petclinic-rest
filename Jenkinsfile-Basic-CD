@@ -58,8 +58,8 @@ pipeline {
               credentialsId: 'test',
               branch: 'main'
         sh """
-          sed -i 's/tag:.*/tag: ${IMAGE_TAG}/g' devops/petclinic-argocd-helm/values.yaml
-          git add devops/petclinic-argocd-helm/values.yaml
+          sed -i 's/tag:.*/tag: ${IMAGE_TAG}/g' values.yaml
+          git add values.yaml
           git commit -m 'Update Docker image tag: ${IMAGE_TAG}'
           git push origin main
         """
