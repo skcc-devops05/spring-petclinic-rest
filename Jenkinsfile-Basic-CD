@@ -45,7 +45,7 @@ pipeline {
         }
       }
     }
-    stage( 'Deploy to Cluster' ) {
+    /* stage( 'Deploy to Cluster' ) {
       steps {
         script {
           kubernetesDeploy(kubeconfigId: 'kubeconfig-sa-token', configs: 'petclinic-app.yaml')
@@ -56,6 +56,25 @@ pipeline {
           sh 'kubectl wait --for=condition=available --timeout=60s deployments -l app=petclinic'
           sh 'kubectl wait --for=condition=ready --timeout=60s pods -l app=hello-world'
         }*/
+      }
+    }*/
+    stage('Update manifest') {
+      steps {
+        sh """
+          git config --global user.name 'skcc-devops05'
+          git config --global user.email 'skcc-devops05@sk.com'
+          git config --global credential.helper cache
+          git config --global push.default simple
+        """
+        git url: 'https://github.com/skcc-devops05/petclinic-argocd-helm.git',
+            credentialsId: 'skcc-devops05-github',
+              branch: 'main'
+        sh """
+          sed -i 's/tag:.*/tag: ${IMAGE_TAG}/g' values.yaml
+          git add values.yaml
+          git commit -m 'Update Docker image tag: ${IMAGE_TAG}'
+          git push origin main
+        """
       }
     }
   }
