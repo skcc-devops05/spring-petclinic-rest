@@ -13,7 +13,7 @@ pipeline {
     IMAGE_REPO = 'repo-spring-petclinic-rest'
     IMAGE_NAME = 'spring-petclinic-rest'
     IMAGE_TAG = sh(returnStdout: true, script: '(git rev-parse --short HEAD && echo "_$BUILD_NUMBER") | tr -d "\n"').trim()
-    APP_URL = 'a2d2c96007a7540ac8d7272b63104582-e79675da07515235.elb.ap-northeast-2.amazonaws.com'
+    APP_URL = 'http://a2d2c96007a7540ac8d7272b63104582-e79675da07515235.elb.ap-northeast-2.amazonaws.com/petclinic'
     APP_PORT = 80
   }
 
@@ -66,6 +66,27 @@ pipeline {
         """
       }
     }
-    
+    stage('API Test') {
+      steps {
+        container('newman') {
+          
+          git url: 'https://github.com/skcc-devops05/spring-petclinic-rest.git',
+                  credentialsId: 'test',
+                    branch: 'master'
+                    
+          sh """
+            newman run api_test.json \
+                  --env-var 'baseUrl=${APP_URL}' --env-var 'petTypeId=""'\
+                  --reporters cli,junit \
+                  --reporter-junit-export 'petclinic-report.xml'
+          """
+        }
+      }
+      post {
+        always {
+          junit 'petclinic-report.xml'
+        }
+      }
+    }
   }
 }
