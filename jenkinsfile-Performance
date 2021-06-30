@@ -23,7 +23,6 @@ pipeline {
        steps {
          container('jmeter') {
          sh """
-         git checkout origin/master
           git config --global user.name 'skcc-devops05'
           git config --global user.email 'skcc.devops05@sk.com'
           git config --global credential.helper cache
