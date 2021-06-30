@@ -7,15 +7,15 @@ pipeline {
   }
 
   environment {
-    REGISTRY_URL = '54.180.16.187:8000'
+    REGISTRY_URL = '13.125.176.176:8000'
     REGISTRY_CREDENTIALS = 'Harbor-docker-registry'
     APP_IMAGE = null
     IMAGE_REPO = 'repo-spring-petclinic-rest'
     IMAGE_NAME = 'spring-petclinic-rest'
     IMAGE_TAG = sh(returnStdout: true, script: '(git rev-parse --short HEAD && echo "_$BUILD_NUMBER") | tr -d "\n"').trim()
-    APP_URL='http://ad023ff3956274e04a524f6dfe08fbe1-3c32bf7bdf2ae59d.elb.ap-northeast-2.amazonaws.com/petclinic'
+    APP_URL='http://a2d2c96007a7540ac8d7272b63104582-e79675da07515235.elb.ap-northeast-2.amazonaws.com/petclinic'
     APP_PORT=80
-    PerfURL='ad023ff3956274e04a524f6dfe08fbe1-3c32bf7bdf2ae59d.elb.ap-northeast-2.amazonaws.com'
+    PerfURL='a2d2c96007a7540ac8d7272b63104582-e79675da07515235.elb.ap-northeast-2.amazonaws.com'
   }
 
   stages {
@@ -24,8 +24,8 @@ pipeline {
          container('jmeter') {
          sh """
          git checkout origin/master
-          git config --global user.name 'skccdevops03'
-          git config --global user.email 'skcc.devops03@sk.com'
+          git config --global user.name 'skcc-devops05'
+          git config --global user.email 'skcc.devops05@sk.com'
           git config --global credential.helper cache
           git config --global push.default simple
         """
