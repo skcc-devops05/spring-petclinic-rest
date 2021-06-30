@@ -25,6 +25,13 @@ pipeline {
          sh """
            git config --global user.name 'skcc-devops05'
            git config --global user.email 'skcc.devops05@sk.com'
+         """
+
+         git url: 'https://github.com/skcc-devops05/spring-petclinic-rest.git',
+           credentialsId: 'test',
+           branch: 'master'
+
+         sh """    
            JVM_ARGS="-Xms1G -Xmx1G" && export JVM_ARGS && /usr/local/jmeter/apache-jmeter-5.4.1/bin/jmeter.sh \
            -n -f -t PerformanceTest/TS01_TC01_AWSPipeline.jmx -Jurl=${PerfURL} \
            -l PerformanceTest/TestResult/Result_${BUILD_NUMBER}.jtl \
