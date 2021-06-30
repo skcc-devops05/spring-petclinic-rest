@@ -123,6 +123,7 @@ pipeline {
                  perfReport 'PerformanceTest/TestResult/Result_${BUILD_NUMBER}.jtl'
                  }
                }
+             }
     stage('API Test') {
       steps {
         container('newman') {
