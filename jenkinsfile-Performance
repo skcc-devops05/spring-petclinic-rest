@@ -28,19 +28,19 @@ pipeline {
           git config --global user.email 'skcc.devops05@sk.com'
           git config --global credential.helper cache
           git config --global push.default simple
-        """
-         
-         sh """
+       """
+          git url: 'https://github.com/skcc-devops05/spring-petclinic-rest.git',
+              credentialsId: 'test',
+              branch: 'master'
+        sh """
          JVM_ARGS="-Xms1G -Xmx1G" && export JVM_ARGS && /usr/local/jmeter/apache-jmeter-5.4.1/bin/jmeter.sh \
          -n -f -t PerformanceTest/TS01_TC01_AWSPipeline.jmx -Jurl=${PerfURL} \
          -l PerformanceTest/TestResult/Result_${BUILD_NUMBER}.jtl \
          -e -o PerformanceTest/TestResult/Result_html_${BUILD_NUMBER}
-         """
-         sh """
          mv jmeter.log PerformanceTest/TestResult/Result_html_${BUILD_NUMBER}/jmeter.log
-         """
-         sh """
-         git add . && git commit -m 'Publish Jmeter result' && git push origin HEAD:master
+         git add . 
+         git commit -m 'Publish Jmeter result' 
+         git push origin master
          """
          }
          }
