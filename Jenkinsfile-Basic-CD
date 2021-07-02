@@ -16,7 +16,7 @@ pipeline {
     APP_URL = 'http://a2d2c96007a7540ac8d7272b63104582-e79675da07515235.elb.ap-northeast-2.amazonaws.com/petclinic'
     APP_PORT = 80
     PerfURL='a2d2c96007a7540ac8d7272b63104582-e79675da07515235.elb.ap-northeast-2.amazonaws.com'
-    ArgoURL='aa9253ce144b64dca839f6ac0e1ba557-1293852278.ap-northeast-2.elb.amazonaws.com'
+    ArgoURL='a6f6c97e792fa4cb08d641a94493cc85-874169402.ap-northeast-2.elb.amazonaws.com'
     argocdAppPrefix='petclinic-argocd-helm'
     appWaitTimeout = 600
   }
@@ -101,18 +101,17 @@ pipeline {
     }
     stage('Argo'){
        steps {
-       withCredentials([string(credentialsId: 'argo_skccdevops03', variable: 'ARGOCD_AUTH_PWD')]) {
+       withCredentials([usernamePassword(credentialsId: 'argo-credentials', usernameVariable: 'ARGOCD_USER', passwordVariable: 'ARGOCD_AUTH_PWD')]) {
         container('argocd') {
                 sh """
-                yes | argocd login --insecure ${ArgoURL} --username admin --password ${ARGOCD_AUTH_PWD}
+                yes | argocd login --insecure ${ArgoURL} --username ${ARGOCD_USER} --password ${ARGOCD_AUTH_PWD}
                 argocd app sync ${argocdAppPrefix}
                 argocd app wait ${argocdAppPrefix} --timeout ${appWaitTimeout}
                 """
           }
+         }
        }
-       }
-     }
-    
+     }   
     stage('PerforfmanceTest') {
               steps {
                 withCredentials([usernamePassword(credentialsId: 'test', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PWD')]) {
