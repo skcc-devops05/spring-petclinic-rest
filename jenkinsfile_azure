@@ -7,6 +7,8 @@ pipeline {
       IMAGE_REPO = 'repo-spring-petclinic-rest'
       IMAGE_NAME = 'spring-petclinic-rest'
       IMAGE_TAG = sh(returnStdout: true, script: '(git rev-parse --short HEAD && echo "_$BUILD_NUMBER") | tr -d "\n"').trim()
+      REGISTRY_URL = 'http://20.194.39.11:8000'
+      REGISTRY_CREDENTIALS = 'credential_harbor'
     }
     
     stages {
@@ -43,6 +45,16 @@ pipeline {
         steps {
           script {
             APP_IMAGE = docker.build("${IMAGE_REPO}/${IMAGE_NAME}:${IMAGE_TAG}")
+          }
+        }
+      }
+      stage('Push Docker image') {
+        steps {
+          script {
+            docker.withRegistry(REGISTRY_URL, REGISTRY_CREDENTIALS) {
+              APP_IMAGE.push()
+              APP_IMAGE.push('latest')
+            }
           }
         }
       }
