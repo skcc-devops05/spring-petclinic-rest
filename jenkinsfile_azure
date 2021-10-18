@@ -77,6 +77,23 @@ pipeline {
           """
         }
       }
+      stage('Argo'){
+        steps {
+          withCredentials([usernamePassword(credentialsId: 'argo-credentials', usernameVariable: 'ARGOCD_USER', passwordVariable: 'ARGOCD_AUTH_PWD')]) {
+            container('argocd') {
+              sh """
+              yes | argocd login --insecure ${ArgoURL} --username ${ARGOCD_USER} --password ${ARGOCD_AUTH_PWD}
+              argocd app sync ${argocdAppPrefix}
+              argocd app wait ${argocdAppPrefix} --timeout ${appWaitTimeout}
+              argocd logout ${ArgoURL}
+              sleep 10
+               """
+             }
+           }
+         }
+       }
+
+
 
 
 
