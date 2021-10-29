@@ -92,5 +92,26 @@ pipeline {
       }
     }
 
+    stage('Build Docker image') {
+      agent any
+      steps {
+        script {
+          APP_IMAGE = docker.build("${IMAGE_REPO}/${IMAGE_NAME}:${IMAGE_TAG}")
+        }
+      }
+    }
+
+    stage('Push Docker image') {
+      agent any
+      steps {
+        script {
+          docker.withRegistry(REGISTRY_URL, REGISTRY_CREDENTIALS) {
+            APP_IMAGE.push()
+            APP_IMAGE.push('latest')
+          }
+        }
+      }
+    }
+
   }  /* stages */
 }  /* pipeline */
