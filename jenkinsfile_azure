@@ -17,6 +17,7 @@ pipeline {
   }
 
   stages {
+
     stage('Build') {
       agent {
         kubernetes {
@@ -30,5 +31,26 @@ pipeline {
         }
       }
     }
-  }
-}
+
+    stage('Unit Test') {
+      agent {
+        kubernetes {
+          label 'petclinic-cd'
+          yamlFile 'jenkins-agent-pod.yaml'
+        }
+      }
+      steps {
+        container('maven') {
+          sh 'mvn test'
+        }
+      }
+      post {
+        always {
+          junit 'targetsurefire-reports.xml'
+          step([ $class 'JacocoPublisher' ])
+        }
+      }
+    }
+
+  }  /* stages */
+}  /* pipeline */
