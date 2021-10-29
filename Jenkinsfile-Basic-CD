@@ -114,7 +114,7 @@ pipeline {
          }
        }
      }   
-    stage('PerforfmanceTest') {
+    stage('Performance Test') {
               steps {
                 withCredentials([usernamePassword(credentialsId: 'test', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PWD')]) {
                     container('jmeter') {
