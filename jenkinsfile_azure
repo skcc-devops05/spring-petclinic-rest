@@ -46,8 +46,39 @@ pipeline {
       }
       post {
         always {
-          junit 'targetsurefire-reports.xml'
+          junit 'target/surefire-reports/*.xml'
           step([ $class: 'JacocoPublisher' ])
+        }
+      }
+    }
+
+    stage('Static Code Analysis') {
+      agent {
+        kubernetes {
+          label 'petclinic-cd'
+          yamlFile 'jenkins-agent-pod.yaml'
+        }
+      }
+      steps {
+        configFileProvider([configFile(fileId: 'maven-settings', variable: 'MAVEN_SETTINGS')]) {
+          container('maven') {
+            sh 'mvn sonar:sonar -s $MAVEN_SETTINGS'
+          }
+        }
+      }
+    }
+
+    stage('Package') {
+      agent {
+        kubernetes {
+          label 'petclinic-cd'
+          yamlFile 'jenkins-agent-pod.yaml'
+        }
+      }
+      steps {
+        container('maven') {
+          sh 'mvn clean package -DskipTests'
+          archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
         }
       }
     }
