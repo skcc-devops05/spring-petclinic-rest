@@ -113,5 +113,48 @@ pipeline {
       }
     }
 
+    stage('Update manifest') {
+      agent any
+      steps {
+        sh """
+          git config --global user.name 'skcc-devops05'
+          git config --global user.email 'skcc-devops05@sk.com'
+          git config --global credential.helper cache
+          git config --global push.default simple
+        """
+        git url: 'https://github.com/skcc-devops05/az-helm-petclinic.git',
+          credentialsId: 'credential_git',
+          branch: 'main'
+        sh """
+          sed -i 's/tag:.*/tag: "${IMAGE_TAG}"/g' values.yaml
+          git add values.yaml
+          git commit -m 'Update Docker image tag: ${IMAGE_TAG}'
+          git push origin main
+        """
+      }
+    }
+
+    stage('Argo'){
+      agent {
+        kubernetes {
+          label 'petclinic-cd'
+          yamlFile 'jenkins-agent-pod.yaml'
+        }
+      }
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'credential_argocd', usernameVariable: 'ARGOCD_USER', passwordVariable: 'ARGOCD_AUTH_PWD')]) {
+          container('argocd') {
+            sh """
+              yes | argocd login --insecure ${ArgoURL} --username ${ARGOCD_USER} --password ${ARGOCD_AUTH_PWD}
+              argocd app sync ${argocdAppPrefix}
+              argocd app wait ${argocdAppPrefix} --timeout ${appWaitTimeout}
+              argocd logout ${ArgoURL}
+              sleep 10
+            """
+          }
+        }
+      }
+    }
+
   }  /* stages */
 }  /* pipeline */
