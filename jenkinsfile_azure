@@ -181,7 +181,7 @@ pipeline {
       }
     }
 
-    stage('Perforfmance Test') {
+    stage('Performance Test') {
       agent {
         kubernetes {
           label 'petclinic-cd'
