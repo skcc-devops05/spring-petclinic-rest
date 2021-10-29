@@ -1,21 +1,6 @@
 pipeline {
   agent none
   
-  environment {
-    REGISTRY_URL = '13.125.176.1768000'
-    REGISTRY_CREDENTIALS = 'harbor-docker-registry'
-    APP_IMAGE = null
-    IMAGE_REPO = 'repo-spring-petclinic-rest'
-    IMAGE_NAME = 'spring-petclinic-rest'
-    IMAGE_TAG = sh(returnStdout true, script '(git rev-parse --short HEAD && echo _$BUILD_NUMBER)  tr -d n').trim()
-    APP_URL = 'httpa2d2c96007a7540ac8d7272b63104582-e79675da07515235.elb.ap-northeast-2.amazonaws.competclinic'
-    APP_PORT = 80
-    PerfURL='a2d2c96007a7540ac8d7272b63104582-e79675da07515235.elb.ap-northeast-2.amazonaws.com'
-    ArgoURL='a6f6c97e792fa4cb08d641a94493cc85-874169402.ap-northeast-2.elb.amazonaws.com'
-    argocdAppPrefix='petclinic-argocd-helm'
-    appWaitTimeout = 600
-  }
-
   stages {
     stage('Build') {
       agent {
