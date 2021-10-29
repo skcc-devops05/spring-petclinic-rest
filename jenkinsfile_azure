@@ -53,6 +53,14 @@ pipeline {
     }
 
     stage('Static Code Analysis') {
+      steps {
+        configFileProvider([configFile(fileId: 'maven-settings', variable: 'MAVEN_SETTINGS')]) {
+          sh './mvnw sonar:sonar -s $MAVEN_SETTINGS'
+        }
+      }
+    }
+/*
+    stage('Static Code Analysis') {
       agent {
         kubernetes {
           label 'petclinic-cd'
@@ -67,7 +75,7 @@ pipeline {
         }
       }
     }
-
+*/
     stage('Package') {
       agent {
         kubernetes {
