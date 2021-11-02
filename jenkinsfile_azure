@@ -26,9 +26,9 @@ pipeline {
         }
       }
       steps {
-        /*container('maven') {
+        container('maven') {
           sh 'mvn clean compile'
-        }*/
+        }
       }
     }
 
@@ -40,15 +40,15 @@ pipeline {
         }
       }
       steps {
-        /*container('maven') {
+        container('maven') {
           sh 'mvn test'
-        }*/
+        }
       }
       post {
-        /*always {
+        always {
           junit 'target/surefire-reports/*.xml'
           step([ $class: 'JacocoPublisher' ])
-        }*/
+        }
       }
     }
 
@@ -85,10 +85,10 @@ pipeline {
         }
       }
       steps {
-        /*container('maven') {
+        container('maven') {
           sh 'mvn clean package -DskipTests'
           archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
-        }*/
+        }
       }
     }
 
