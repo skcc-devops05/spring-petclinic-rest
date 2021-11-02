@@ -49,8 +49,8 @@ pipeline {
           junit 'target/surefire-reports/*.xml'
           step([ $class: 'JacocoPublisher' ])
         }
-*/      }
-    }
+      }
+*/    }
 
     stage('Static Code Analysis') {
       agent any
@@ -89,8 +89,8 @@ pipeline {
           sh 'mvn clean package -DskipTests'
           archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
         }
-*/      }
-    }
+      }
+*/    }
 
     stage('Build Docker image') {
       agent any
