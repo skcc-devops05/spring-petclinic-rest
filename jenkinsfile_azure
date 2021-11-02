@@ -19,38 +19,38 @@ pipeline {
   stages {
 
     stage('Build') {
-/*      agent {
+      agent {
         kubernetes {
           label 'petclinic-cd'
           yamlFile 'jenkins-agent-pod.yaml'
         }
       }
       steps {
-        container('maven') {
+        /*container('maven') {
           sh 'mvn clean compile'
-        }
+        }*/
       }
- */   }
+    }
 
     stage('Unit Test') {
-/*      agent {
+      agent {
         kubernetes {
           label 'petclinic-cd'
           yamlFile 'jenkins-agent-pod.yaml'
         }
       }
       steps {
-        container('maven') {
+        /*container('maven') {
           sh 'mvn test'
-        }
+        }*/
       }
       post {
-        always {
+        /*always {
           junit 'target/surefire-reports/*.xml'
           step([ $class: 'JacocoPublisher' ])
-        }
+        }*/
       }
-*/    }
+    }
 
     stage('Static Code Analysis') {
       agent any
@@ -78,19 +78,19 @@ pipeline {
     }
 */
     stage('Package') {
-/*      agent {
+      agent {
         kubernetes {
           label 'petclinic-cd'
           yamlFile 'jenkins-agent-pod.yaml'
         }
       }
       steps {
-        container('maven') {
+        /*container('maven') {
           sh 'mvn clean package -DskipTests'
           archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
-        }
+        }*/
       }
-*/    }
+    }
 
     stage('Build Docker image') {
       agent any
