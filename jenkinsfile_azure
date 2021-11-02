@@ -164,7 +164,7 @@ pipeline {
         }
       }
       steps {
-        withCredentials([usernamePassword(credentialsId: 'test', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PWD')]) {
+        withCredentials([usernamePassword(credentialsId: 'credential_git', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PWD')]) {
           container('jmeter') {
             sh "git checkout origin/master"
             sh "git config remote.origin.url https://${GIT_USER}:${GIT_PWD}@github.com/skcc-devops05/spring-petclinic-rest.git"
